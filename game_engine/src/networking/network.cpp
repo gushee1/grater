@@ -31,9 +31,9 @@ namespace grater {
 
 		void JoinServer(const std::string& host, uint16_t port)
 		{
+			SetMultiplayerState(MultiplayerState::CLIENT);
 			client = std::make_unique<Client<GraterMessageTypes>>();
 			client->Connect(host, port);
-			SetMultiplayerState(MultiplayerState::CLIENT);
 		}
 
 	}

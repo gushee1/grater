@@ -171,10 +171,12 @@ namespace grater
 
 				switch (msg.header.id) {
 				case GraterMessageTypes::Input:
-					msg >> key;
+					//TODO: search here for segfault
+					//key = msg.body[0];
 					std::cout << "[" << client->GetID() << "]: Keycode " << key << " pressed." << std::endl;
 					break;
 				default:
+					std::cout << "[" << client->GetID() << "]: Sent message with header id [" << static_cast<int>(msg.header.id) << "]" << std::endl;
 					break;
 				}
 			}
@@ -189,6 +191,8 @@ namespace grater
 			asio::ip::tcp::acceptor asioAcceptor;
 
 			uint32_t uniqueIDCounter = 10000;
+
+			//meow
 		};
 	}
 }

@@ -175,6 +175,10 @@ namespace grater
 
 			Owner ownerType = Owner::server;
 			uint32_t id = 0;
+
+		private:
+			std::vector<uint8_t> rawDataIn;
+			tsqueue<std::vector<uint8_t>> rawDataOut;
 		};
 	}
 }

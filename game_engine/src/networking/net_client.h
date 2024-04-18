@@ -99,7 +99,9 @@ namespace grater {
 				message<GraterMessageTypes> msg;
 				msg.header.id = GraterMessageTypes::Input;
 
-				msg << key;
+				msg.body.push_back(key);
+
+				std::cout << "Sending message with id " << static_cast<int>(msg.header.id) << std::endl;
 				connectionRef->Send(msg);
 			}
 
