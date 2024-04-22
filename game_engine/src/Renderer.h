@@ -14,6 +14,7 @@
 #include "EngineUtils.h"
 #include "TextDB.h"
 #include "ActorDB.h"
+#include "networking/network.h"
 
 class Renderer
 {
@@ -127,6 +128,8 @@ public:
 	static void DrawPixels();
 
 	static void ShowFrame();
+
+	static void SendFrameToClient();
 
 	static inline SDL_Window* game_window = nullptr;
 

@@ -124,7 +124,16 @@ void Renderer::DrawToFrame(SDL_Texture* texture_to_draw, int x, int y)
 
 void Renderer::QueueImageToDraw(std::string image_name, float x, float y)
 {
-	image_queue.push_back(ImageParams(image_name, x, y));
+	switch (grater::network::GetMultiplayerState()) {
+	case grater::network::MultiplayerState::SINGLEPLAYER:
+		image_queue.push_back(ImageParams(image_name, x, y));
+		break;
+	case grater::network::MultiplayerState::SERVER:
+		grater::network::server->SendDrawRequest();
+		break;
+	default:
+		break;
+	}
 }
 
 void Renderer::QueueImageToDrawEx(std::string image_name, float x, float y, float rotation_degrees, float scale_x, float scale_y, float pivot_x, float pivot_y, float r, float g, float b, float a, float sorting_order)

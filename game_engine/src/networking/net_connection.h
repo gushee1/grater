@@ -34,10 +34,14 @@ namespace grater
 
 		private:
 			std::vector<uint8_t> currentReadBuffer;
+			std::mutex readMutex;
 			std::vector<uint8_t> currentWriteBuffer;
+			std::mutex writeMutex;
+
 			message tempMessageIn;
 
 			void SerializeHeader(const message& msg) {
+				std::lock_guard<std::mutex> guard(writeMutex);
 				currentWriteBuffer.clear();
 				currentWriteBuffer.reserve(2);
 				currentWriteBuffer.push_back(static_cast<uint8_t>(msg.header.id));
@@ -45,6 +49,7 @@ namespace grater
 			}
 
 			void SerializeBody(const message& msg) {
+				std::lock_guard<std::mutex> guard(writeMutex);
 				currentWriteBuffer.clear();
 				currentWriteBuffer.reserve(msg.header.bodySize);
 				for (uint8_t byte : msg.body) {
@@ -53,6 +58,7 @@ namespace grater
 			}
 
 			void DeserializeHeader(const std::vector<uint8_t> buffer) {
+				std::lock_guard<std::mutex> guard(readMutex);
 				if (buffer.size() != 2) {
 					std::cout << "Invalid Header Size" << std::endl;
 					exit(101);
@@ -62,6 +68,7 @@ namespace grater
 			}
 
 			void DeserializeBody(const std::vector<uint8_t> buffer) {
+				std::lock_guard<std::mutex> guard(readMutex);
 				for (uint8_t byte : buffer) {
 					tempMessageIn.body.push_back(byte);
 				}

@@ -191,6 +191,10 @@ namespace grater
 			uint32_t uniqueIDCounter = 10000;
 
 			//meow
+		public:
+			void SendDrawRequest() {
+				return;
+			}	
 		};
 	}
 }
