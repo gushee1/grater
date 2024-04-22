@@ -9,8 +9,8 @@
 
 namespace grater {
 	namespace network {
-		extern std::unique_ptr<Server<GraterMessageTypes>> server;
-		extern std::unique_ptr<Client<GraterMessageTypes>> client;
+		extern std::unique_ptr<Server> server;
+		extern std::unique_ptr<Client> client;
 
 		enum MultiplayerState { SINGLEPLAYER, SERVER, CLIENT, BOTH };
 		extern std::atomic<MultiplayerState> multiplayerState;

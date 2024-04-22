@@ -9,7 +9,6 @@ namespace grater
 {
 	namespace network
 	{
-		template <typename T>
 		class Server 
 		{
 		public:
@@ -69,15 +68,15 @@ namespace grater
 						{
 							std::cout << "[SERVER] New Connection: " << socket.remote_endpoint() << std::endl;
 
-							std::shared_ptr<Connection<T>> newConnection =
-								std::make_shared<Connection<T>>(Connection<T>::Owner::server,
+							std::shared_ptr<Connection> newConnection =
+								std::make_shared<Connection>(Connection::Owner::SERVER,
 									asioContext, std::move(socket), messagesIn);
 
 							bool connectionAccepted = OnClientConnect(newConnection);
 							if (connectionAccepted) 
 							{
 								connections.push_back(std::move(newConnection));
-								std::shared_ptr<Connection<T>> newConnectionRef = connections.back();
+								std::shared_ptr<Connection> newConnectionRef = connections.back();
 								newConnectionRef->ConnectToClient(uniqueIDCounter++);
 
 								std::cout << "[" << newConnectionRef->GetID() << "] Connection Approved\n";
@@ -96,7 +95,7 @@ namespace grater
 					});
 			}
 
-			void MessageClient(std::shared_ptr<Connection<T>> client, const message<T>& msg) 
+			void MessageClient(std::shared_ptr<Connection> client, const message& msg) 
 			{
 				if (client && client->IsConnected()) 
 				{
@@ -110,11 +109,11 @@ namespace grater
 				}
 			}
 
-			void MessageAllClients(const message<T>& msg, std::shared_ptr<Connection<T>> clientToIgnore)
+			void MessageAllClients(const message& msg, std::shared_ptr<Connection> clientToIgnore)
 			{
 				bool invalidClientExists = false;
 
-				for (std::shared_ptr<Connection<T>>& client : connections) 
+				for (std::shared_ptr<Connection>& client : connections) 
 				{
 					if (client && client->IsConnected())
 					{
@@ -143,36 +142,35 @@ namespace grater
 
 				while (!messagesIn.empty()) 
 				{
-					owned_message<T> msg = messagesIn.pop_front();
+					owned_message msg = messagesIn.pop_front();
 
 					OnMessage(msg.owner, msg.msg);
 				}
 
-				message<GraterMessageTypes> pulse;
+				message pulse;
 				pulse.header.id = GraterMessageTypes::MessageAll;
 				//MessageAllClients(pulse, nullptr);
 			}
 
 		protected:
 			//returning false will veto client from connecting to server
-			bool OnClientConnect(std::shared_ptr<Connection<T>> client) 
+			bool OnClientConnect(std::shared_ptr<Connection> client) 
 			{
 				return true;
 			}
 
-			void OnClientDisconnect(std::shared_ptr<Connection<T>> client) 
+			void OnClientDisconnect(std::shared_ptr<Connection> client) 
 			{
 
 			}
 			
-			void OnMessage(std::shared_ptr<Connection<T>> client, message<T> msg) 
+			void OnMessage(std::shared_ptr<Connection> client, message msg) 
 			{
 				int key = 0;
 
 				switch (msg.header.id) {
 				case GraterMessageTypes::Input:
-					//TODO: search here for segfault
-					//key = msg.body[0];
+					key = msg.body[0];
 					std::cout << "[" << client->GetID() << "]: Keycode " << key << " pressed." << std::endl;
 					break;
 				default:
@@ -181,9 +179,9 @@ namespace grater
 				}
 			}
 
-			tsqueue<owned_message<T>> messagesIn;
+			tsqueue<owned_message> messagesIn;
 
-			std::deque<std::shared_ptr<Connection<T>>> connections;
+			std::deque<std::shared_ptr<Connection>> connections;
 
 			asio::io_context asioContext;
 			std::thread contextThread;

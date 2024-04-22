@@ -27,7 +27,7 @@ void Input::ProcessEvent(const SDL_Event& e)
 		//std::cout << grater::network::GetMultiplayerState() << std::endl;
 		if (grater::network::GetMultiplayerState() == grater::network::MultiplayerState::CLIENT) {
 			std::cout << "[CLIENT] Sending input code " << e.key.keysym.scancode << std::endl;
-			grater::network::client->SendKeyboardInput(static_cast<int>(e.key.keysym.scancode));
+			grater::network::client->SendKeyboardInput(static_cast<uint8_t>(e.key.keysym.scancode));
 		}
 		keyboard_states[e.key.keysym.scancode] = INPUT_STATE_DOWN_THIS_FRAME;
 		down_this_frame_scancodes.push_back(e.key.keysym.scancode);
